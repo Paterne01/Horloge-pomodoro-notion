@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horloge et Pomodoro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .clock {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .pomodoro {
+            margin-top: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock" id="clock">00:00:00</div>
+    <div class="pomodoro">
+        <button onclick="startPomodoro()">Démarrer Pomodoro</button>
+        <button onclick="resetPomodoro()">Réinitialiser</button>
+        <div id="timer">25:00</div>
+    </div>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = time;
+        }
+        setInterval(updateClock, 1000);
 
+        let timer;
+        function startPomodoro() {
+            let timeLeft = 25 * 60;
+            document.getElementById('timer').textContent = formatTime(timeLeft);
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = formatTime(timeLeft);
+                if (timeLeft <= 0) clearInterval(timer);
+            }, 1000);
+        }
+        function resetPomodoro() {
+            clearInterval(timer);
+            document.getElementById('timer').textContent = '25:00';
+        }
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
