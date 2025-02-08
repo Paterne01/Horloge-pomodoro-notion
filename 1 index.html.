@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horloge et Pomodoro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            color: #000; /* Noir par défaut */
+            background-color: #ffeb3b; /* Jaune par défaut */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7); /* Noir avec transparence */
+            padding: 20px;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            color: #fff; /* Blanc par défaut pour le texte interne */
+        }
+        .clock {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .pomodoro {
+            margin-top: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        input[type="file"], input[type="color"] {
+            margin-top: 20px;
+        }
+        #timer {
+            font-size: 32px;
+            margin-top: 10px;
+        }
+        .customization {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="clock" id="clock">00:00:00</div>
+        <div class="pomodoro">
+            <button id="start-btn">Démarrer Pomodoro</button>
+            <button id="reset-btn">Réinitialiser</button>
+            <div id="timer">25:00</div>
+        </div>
+        <div class="background-upload">
+            <label for="background-input">Changer l'arrière-plan :</label>
+            <input type="file" id="background-input" accept="image/*">
+        </div>
+        <div class="customization">
+            <label for="text-color">Couleur du texte :</label>
+            <input type="color" id="text-color" value="#000000">
+
+            <label for="bg-color">Couleur d'arrière-plan :</label>
+            <input type="color" id="bg-color" value="#ffeb3b">
+
+            <label for="button-color">Couleur des boutons :</label>
+            <input type="color" id="button-color" value="#4caf50">
+        </div>
+    </div>
+    <script>
+        // Horloge
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = time;
+        }
+        setInterval(updateClock, 1000);
+
+        // Minuteur Pomodoro
+        let timer;
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const timerDisplay = document.getElementById('timer');
+
+        function startPomodoro() {
+            let timeLeft = 25 * 60;
+            timerDisplay.textContent = formatTime(timeLeft);
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = formatTime(timeLeft);
+                if (timeLeft <= 0) clearInterval(timer);
+            }, 1000);
+        }
+
+        function resetPomodoro() {
+            clearInterval(timer);
+            timerDisplay.textContent = '25:00';
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        startBtn.addEventListener('click', startPomodoro);
+        resetBtn.addEventListener('click', resetPomodoro);
+
+        // Changer l'arrière-plan
+        const bgInput = document.getElementById('background-input');
+        bgInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.body.style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Personnalisation des couleurs
+        const textColorInput = document.getElementById('text-color');
+        const bgColorInput = document.getElementById('bg-color');
+        const buttonColorInput = document.getElementById('button-color');
+
+        textColorInput.addEventListener('input', (event) => {
+            document.body.style.color = event.target.value;
+        });
+
+        bgColorInput.addEventListener('input', (event) => {
+            document.body.style.backgroundColor = event.target.value;
+        });
+
+        buttonColorInput.addEventListener('input', (event) => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.style.backgroundColor = event.target.value;
+            });
+        });
+    </script>
+</body>
+</html>
